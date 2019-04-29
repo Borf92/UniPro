@@ -1,0 +1,9 @@
+D:\Projects\New_TFS\Quadra\QuadraCore\bin\Release\netcoreapp2.2\QuadraCore.deps.json
+D:\Projects\New_TFS\Quadra\QuadraCore\bin\Release\netcoreapp2.2\QuadraCore.dll
+D:\Projects\New_TFS\Quadra\QuadraCore\bin\Release\netcoreapp2.2\QuadraCore.pdb
+D:\Projects\New_TFS\Quadra\QuadraCore\obj\Release\netcoreapp2.2\QuadraCore.csproj.CoreCompileInputs.cache
+D:\Projects\New_TFS\Quadra\QuadraCore\obj\Release\netcoreapp2.2\QuadraCore.AssemblyInfoInputs.cache
+D:\Projects\New_TFS\Quadra\QuadraCore\obj\Release\netcoreapp2.2\QuadraCore.AssemblyInfo.cs
+D:\Projects\New_TFS\Quadra\QuadraCore\obj\Release\netcoreapp2.2\QuadraCore.dll
+D:\Projects\New_TFS\Quadra\QuadraCore\obj\Release\netcoreapp2.2\QuadraCore.pdb
+D:\Projects\New_TFS\Quadra\QuadraCore\obj\Release\netcoreapp2.2\QuadraCore.csprojAssemblyReference.cache

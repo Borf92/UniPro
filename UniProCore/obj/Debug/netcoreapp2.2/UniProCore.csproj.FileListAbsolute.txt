@@ -1,0 +1,16 @@
+D:\Projects\UniPro\QuadraCore\bin\Debug\netcoreapp2.2\UniProCore.deps.json
+D:\Projects\UniPro\QuadraCore\bin\Debug\netcoreapp2.2\UniProCore.dll
+D:\Projects\UniPro\QuadraCore\bin\Debug\netcoreapp2.2\UniProCore.pdb
+D:\Projects\UniPro\QuadraCore\obj\Debug\netcoreapp2.2\UniProCore.csproj.CoreCompileInputs.cache
+D:\Projects\UniPro\QuadraCore\obj\Debug\netcoreapp2.2\UniProCore.AssemblyInfoInputs.cache
+D:\Projects\UniPro\QuadraCore\obj\Debug\netcoreapp2.2\UniProCore.AssemblyInfo.cs
+D:\Projects\UniPro\QuadraCore\obj\Debug\netcoreapp2.2\UniProCore.dll
+D:\Projects\UniPro\QuadraCore\obj\Debug\netcoreapp2.2\UniProCore.pdb
+D:\Projects\UniPro\UniProCore\bin\Debug\netcoreapp2.2\UniProCore.deps.json
+D:\Projects\UniPro\UniProCore\bin\Debug\netcoreapp2.2\UniProCore.dll
+D:\Projects\UniPro\UniProCore\bin\Debug\netcoreapp2.2\UniProCore.pdb
+D:\Projects\UniPro\UniProCore\obj\Debug\netcoreapp2.2\UniProCore.csproj.CoreCompileInputs.cache
+D:\Projects\UniPro\UniProCore\obj\Debug\netcoreapp2.2\UniProCore.AssemblyInfoInputs.cache
+D:\Projects\UniPro\UniProCore\obj\Debug\netcoreapp2.2\UniProCore.AssemblyInfo.cs
+D:\Projects\UniPro\UniProCore\obj\Debug\netcoreapp2.2\UniProCore.dll
+D:\Projects\UniPro\UniProCore\obj\Debug\netcoreapp2.2\UniProCore.pdb
