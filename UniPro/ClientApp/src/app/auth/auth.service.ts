@@ -6,12 +6,12 @@ import { Router } from '@angular/router';
   providedIn: 'root'
 })
 export class AuthService {
-  api = 'http://localhost:3000/api';
+  api = 'http://localhost:44323/api';
   token: string;
 
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(private http: HttpClient,  private router: Router,) { }
   login(email: string, password: string) {
-    this.http.post(this.api + '/authenticate', { email: email, password: password })
+    this.http.post(this.api + '/auth/login', { UserName: email, Password: password })
       .subscribe((resp: any) => {
 
         this.router.navigate(['profile']);

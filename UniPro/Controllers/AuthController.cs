@@ -24,7 +24,7 @@ namespace UniProWeb.Controllers
 
         // GET api/values
         [HttpPost]
-        [Route("login")]
+        [Route("/login")]
         public async Task<IActionResult> Login([FromBody]LoginModel user)
         {
             if (user == null) return BadRequest("Invalid client request");

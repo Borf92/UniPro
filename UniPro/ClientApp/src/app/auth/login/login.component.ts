@@ -15,7 +15,7 @@ export class LoginComponent implements OnInit {
   password = '';
 
   constructor(private authService: AuthService) { }
-  Login() {
+  login() {
     console.log('you are logging in');
     this.authService.login(this.email, this.password);
 
