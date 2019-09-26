@@ -1,4 +1,4 @@
-<form class="form" role="form" method="POST" action="/login">
+<form class="form" (ngSubmit)="onSubmit()" #loginForm="ngForm">
   <div class="row">
     <div class="col-md-3"></div>
     <div class="col-md-5">
@@ -13,8 +13,13 @@
         <label class="sr-only" for="email">E-Mail Address</label>
         <div class="input-group mb-2 mr-sm-2 mb-sm-0">
           <div class="input-group-addon" style="width: 2.6rem"><fa-icon [icon]="faAt" size="2x"></fa-icon></div>
-          <input [(ngModel)]="email" type="text" name="email" class="form-control" id="email" placeholder="you@example.com" required
-            autofocus>
+          <input [(ngModel)]="model.userName"
+                 type="text" name="email" 
+                 class="form-control" 
+                 id="email" 
+                 placeholder="you@example.com" 
+                 required 
+                 autofocus>
         </div>
       </div>
     </div>
@@ -33,7 +38,13 @@
         <label class="sr-only" for="password">Password</label>
         <div class="input-group mb-2 mr-sm-2 mb-sm-0">
           <div class="input-group-addon" style="width: 2.6rem"><fa-icon [icon]="faKey" size="2x"></fa-icon></div>
-          <input [(ngModel)]="password" type="password" name="password" class="form-control" id="password" placeholder="Password" required>
+          <input [(ngModel)]="model.password" 
+                 type="password" 
+                 name="password" 
+                 class="form-control" 
+                 id="password" 
+                 placeholder="Password" 
+                 required>
         </div>
       </div>
     </div>
@@ -60,7 +71,10 @@
   <div class="row" style="padding-top: 1rem">
     <div class="col-md-3"></div>
     <div class="col-md-5">
-      <button (click)="login ()" class="btn btn-success btn-lg form-control"><i class="fa fa-sign-in"></i> Login</button>
+      <button type="submit"
+              (click)="login()"
+              class="btn btn-success btn-lg form-control"
+              [disabled]="!loginForm.form.valid"><i class="fa fa-sign-in"></i> Login</button>
     </div>
   </div>
   <div class="row" style="padding-top: 1rem">

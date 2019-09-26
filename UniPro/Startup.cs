@@ -10,7 +10,8 @@ using Microsoft.IdentityModel.Tokens;
 using UniProCore.Identity;
 using UniProData;
 using Microsoft.Extensions.Hosting;
-using Microsoft.AspNetCore.SpaServices.AngularCli;
+using UniProWeb.Models;
+using UniProWeb.Services;
 
 namespace UniProWeb
 {
@@ -41,23 +42,29 @@ namespace UniProWeb
                 });
             });
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            services.Configure<TokenManagement>(Configuration.GetSection("tokenManagement"));
+            var token = Configuration.GetSection("tokenManagement").Get<TokenManagement>();
+            var secretKey = Encoding.ASCII.GetBytes(token.SecretKey);
+
+            services.AddAuthentication(authOptions =>
+            {
+                authOptions.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                authOptions.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
                 .AddJwtBearer(options =>
                 {
+                    options.RequireHttpsMetadata = false;
+                    options.SaveToken = true;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
-
-                        ValidIssuer = "http://localhost:5000",
-                        ValidAudience = "http://localhost:5000",
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superSecretKey@345"))
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(token.SecretKey)),
+                        ValidIssuer = token.Issuer,
+                        ValidAudience = token.Audience,
+                        ValidateIssuer = false,
+                        ValidateAudience = false
                     };
-                });
-
-            //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+                });     
 
             services.AddDbContext<UniProContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("UniProContext")));
@@ -70,6 +77,8 @@ namespace UniProWeb
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+
+            services.AddScoped<IAuthenticateService, TokenAuthenticationService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

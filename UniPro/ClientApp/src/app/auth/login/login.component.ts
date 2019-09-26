@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../auth.service';
+import { LoginModel } from '../login/login.model';
 
 import { faKey, faAt } from '@fortawesome/free-solid-svg-icons';
 
@@ -11,16 +12,14 @@ import { faKey, faAt } from '@fortawesome/free-solid-svg-icons';
 export class LoginComponent implements OnInit {
   faKey = faKey;
   faAt = faAt;
-  email = '';
-  password = '';
+  model = new LoginModel('', '');
+ // submitted = false;
 
   constructor(private authService: AuthService) { }
-  login() {
-    console.log('you are logging in');
-    this.authService.login(this.email, this.password);
-
-  }
-
   ngOnInit() { }
-
+  onSubmit() {
+    // this.submitted = true;
+    console.log('you are logging in');
+    this.authService.login(this.model);
+  }
 }
