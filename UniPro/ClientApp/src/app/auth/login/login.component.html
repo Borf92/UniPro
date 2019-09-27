@@ -13,7 +13,7 @@
         <label class="sr-only" for="email">E-Mail Address</label>
         <div class="input-group mb-2 mr-sm-2 mb-sm-0">
           <div class="input-group-addon" style="width: 2.6rem"><fa-icon [icon]="faAt" size="2x"></fa-icon></div>
-          <input [(ngModel)]="model.userName"
+          <input [(ngModel)]="model.UserName"
                  type="text" name="email" 
                  class="form-control" 
                  id="email" 
@@ -38,7 +38,7 @@
         <label class="sr-only" for="password">Password</label>
         <div class="input-group mb-2 mr-sm-2 mb-sm-0">
           <div class="input-group-addon" style="width: 2.6rem"><fa-icon [icon]="faKey" size="2x"></fa-icon></div>
-          <input [(ngModel)]="model.password" 
+          <input [(ngModel)]="model.Password" 
                  type="password" 
                  name="password" 
                  class="form-control" 
@@ -72,7 +72,6 @@
     <div class="col-md-3"></div>
     <div class="col-md-5">
       <button type="submit"
-              (click)="login()"
               class="btn btn-success btn-lg form-control"
               [disabled]="!loginForm.form.valid"><i class="fa fa-sign-in"></i> Login</button>
     </div>

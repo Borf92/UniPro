@@ -12,14 +12,11 @@ import { faKey, faAt } from '@fortawesome/free-solid-svg-icons';
 export class LoginComponent implements OnInit {
   faKey = faKey;
   faAt = faAt;
-  model = new LoginModel('', '');
- // submitted = false;
+  model = new LoginModel();
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService) {}
   ngOnInit() { }
-  onSubmit() {
-    // this.submitted = true;
-    console.log('you are logging in');
+  private onSubmit() {
     this.authService.login(this.model);
   }
 }

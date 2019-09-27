@@ -11,16 +11,24 @@ import { AuthDataModel } from '../auth/authData.model';
 })
 
 export class AuthService {
-  private _authDataModel: AuthDataModel;
   private _baseUrl: string;
 
   constructor(private http: HttpClient, private router: Router, @Inject('BASE_URL') baseUrl: string) {
-    this._authDataModel = new AuthDataModel();
     this._baseUrl = baseUrl;
   }
+
   private _clearAuthData() {
-    localStorage.remove('authorizationData');
-    this._authDataModel = new AuthDataModel();
+    localStorage.removeItem('authorizationData');
+  }
+
+  private _setAuthData(model: LoginModel, responseData) {
+    localStorage.setItem('authorizationData', {
+      token: responseData.access_token,
+      userName: model.UserName,
+      userRole: responseData.userRole,
+      userId: responseData.userId,
+      refreshToken: responseData.refresh_token
+    });
   }
 
   public login(model: LoginModel) {
@@ -35,29 +43,23 @@ export class AuthService {
     body.set('grant_type', 'password');
     body.set('client_id', 'ECM');
     body.set('client_secret', 'ECM');
-    body.set('username', model.userName);
-    body.set('password', model.password);
+    body.set('username', model.UserName);
+    body.set('password', model.Password);
     return this.http.post(this._baseUrl + 'api/auth/get', body.toString(), httpOptions)
       .subscribe((response: any) => {
-        // this.router.navigate(['profile']);
-        localStorage.set('authorizationData', {
-          token: response.data.access_token,
-          userName: model.userName,
-          userRole: response.data.userRole,
-          userId: response.data.userId,
-          refreshToken: response.data.refresh_token
-        });
-
+        this._setAuthData(model, response);
+        this.router.navigate(['/auth/login']);
+      }, (error: any) => {
+        this._clearAuthData();
+        console.log(error);
       });
   }
 
-  logout() {
-    localStorage.removeItem('token');
+  public logout() {
+    this._clearAuthData();
   }
-  fillAuthData() { }
-  authentication() { }
-  autoLogin() { }
-  refreshToken() {
+
+  public refreshToken() {
     const httpOptionss = {
       headers: new HttpHeaders({
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -72,11 +74,24 @@ export class AuthService {
 
     this.http.post(this._baseUrl + 'api/token', null, httpOptionss)
       .subscribe((response: any) => {
-        // this.router.navigate(['profile']);
         localStorage.set('authorizationData', {
-          token: response.data.access_token,
-          refreshToken: response.data.refresh_token
+          token: response.access_token,
+          refreshToken: response.refresh_token
         });
       });
+  }
+
+  public getToken(): string {
+    return localStorage.getItem('authorizationData')['token'];
+  }
+
+  public getUserData(): AuthDataModel {
+    const userData: AuthDataModel = new AuthDataModel();
+    userData.IsAuth = localStorage.getItem('authorizationData')['token'] !== '';
+    userData.UserId = localStorage.getItem('authorizationData')['userId'];
+    userData.UserName = localStorage.getItem('authorizationData')['userName'];
+    userData.UserRole = localStorage.getItem('authorizationData')['userRole'];
+
+    return userData;
   }
 }
