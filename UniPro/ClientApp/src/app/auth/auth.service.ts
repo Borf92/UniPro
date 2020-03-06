@@ -22,13 +22,13 @@ export class AuthService {
   }
 
   private _setAuthData(model: LoginModel, responseData) {
-    localStorage.setItem('authorizationData', {
-      token: responseData.access_token,
-      userName: model.UserName,
-      userRole: responseData.userRole,
-      userId: responseData.userId,
-      refreshToken: responseData.refresh_token
-    });
+    // localStorage.setItem('authorizationData', {
+    //   token: responseData.access_token,
+    //   userName: model.UserName,
+    //   userRole: responseData.userRole,
+    //   userId: responseData.userId,
+    //   refreshToken: responseData.refresh_token
+    // });
   }
 
   public login(model: LoginModel) {
