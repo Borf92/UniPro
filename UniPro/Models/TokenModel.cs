@@ -10,11 +10,16 @@ namespace UniProWeb.Models
         public string Grant_Type { get; set; }
 
         [Required]
-        [JsonProperty("client_id")]
-        public string Client_Id { get; set; }
+        [JsonProperty("client_issuer")]
+        public string Client_Issuer { get; set; }
+        
+        [Required]
+        [JsonProperty("client_audience")]
+        public string Client_Audience { get; set; }
 
         [Required]
         [JsonProperty("client_secret")]
         public string Client_Secret { get; set; }
+
     }
 }

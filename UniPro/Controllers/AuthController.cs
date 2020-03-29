@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using UniProCore.Identity;
 using UniProWeb.Models;
 using UniProWeb.Services;
@@ -16,13 +17,13 @@ namespace UniProWeb.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IAuthenticateService _authService;
-        //private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public AuthController(IAuthenticateService authService, UserManager<ApplicationUser> userManager)
+        public AuthController(IAuthenticateService authService, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {
             _userManager = userManager;
             _authService = authService;
-            //_signInManager = signInManager;
+            _signInManager = signInManager;
         }
 
         [AllowAnonymous]
@@ -32,7 +33,7 @@ namespace UniProWeb.Controllers
             if (!ModelState.IsValid)
             {
                 return BadRequest("Invalid Request");
-            }           
+            }
 
             var currentUser = await _userManager.FindByNameAsync(request.UserName);
             if (currentUser == null) return NotFound("User not found");
@@ -56,19 +57,17 @@ namespace UniProWeb.Controllers
 
         [AllowAnonymous]
         [HttpPost("[action]")]
-        public IActionResult Refresh(RefreshTokenRequest request)
+        public IActionResult Refresh(RefreshTokenRequest refreshTokenRequest)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest("Invalid Request");
             }
 
-            var principal = _authService.GetPrincipalFromExpiredToken(request.RefreshToken);
+            var token = HttpContext.Request.Headers["Authorization"];
+            var principal = _authService.GetPrincipalFromExpiredToken(token, refreshTokenRequest);
             var username = principal.Identity.Name;
-            var savedRefreshToken = principal.Identities
-                .First(_ => _.NameClaimType == ClaimTypes.X500DistinguishedName)
-                .ToString(); //retrieve the refresh token from a data store
-            if (savedRefreshToken != request.RefreshToken)
+            if (!principal.HasClaim(ClaimTypes.X500DistinguishedName, refreshTokenRequest.Refresh_Token))
                 throw new SecurityTokenException("Invalid refresh token");
 
             if (!_authService.IsCreateNewToken(username, out string newToken, out string newRefreshToken)) return BadRequest();

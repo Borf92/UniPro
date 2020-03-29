@@ -1,4 +1,6 @@
+using System;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -27,63 +29,88 @@ namespace UniProWeb
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
+            services.AddScoped<IAuthenticateService, TokenAuthenticationService>();
+            services.AddScoped<IRoleValidator<IdentityRole>, RoleValidator<IdentityRole>>();
+            services.AddScoped<RoleManager<IdentityRole>, RoleManager<IdentityRole>>();
 
-            services.AddCors(options =>
+            services.AddCors(options => { });
+
+            services.AddDbContext<UniProContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("UniProContext")));
+            IdentityBuilder builder = services.AddIdentityCore<ApplicationUser>(opt =>
             {
-                options.AddPolicy("EnableCORS", builder =>
-                {
-                    builder
-                    .AllowAnyOrigin()
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    //.AllowCredentials()
-                    .Build();
-                });
+                opt.Password.RequireDigit = true;
+                opt.Password.RequiredLength = 8;
+                opt.Password.RequireNonAlphanumeric = false;
+                opt.Password.RequireUppercase = true;
+                opt.Password.RequireLowercase = true;
             });
+
+            builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole), builder.Services);
+            builder.AddEntityFrameworkStores<UniProContext>()
+                .AddDefaultTokenProviders()
+                .AddRoleValidator<RoleValidator<IdentityRole>>()
+                .AddRoleManager<RoleManager<IdentityRole>>()
+                .AddSignInManager<SignInManager<ApplicationUser>>();
 
             services.Configure<TokenManagement>(Configuration.GetSection("tokenManagement"));
             var token = Configuration.GetSection("tokenManagement").Get<TokenManagement>();
             var secretKey = Encoding.ASCII.GetBytes(token.SecretKey);
 
-            services.AddAuthentication(authOptions =>
+            services.AddAuthentication(parametr =>
             {
-                authOptions.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                authOptions.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                parametr.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
+                parametr.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                parametr.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-                .AddJwtBearer(options =>
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
                 {
                     options.RequireHttpsMetadata = false;
-                    options.SaveToken = true;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(token.SecretKey)),
+                        ValidateIssuerSigningKey = false,
+                        IssuerSigningKey = new SymmetricSecurityKey(secretKey),
                         ValidIssuer = token.Issuer,
                         ValidAudience = token.Audience,
                         ValidateIssuer = false,
-                        ValidateAudience = false
+                        ValidateAudience = false,
+                        ValidateLifetime = false,
+                        ClockSkew = TimeSpan.Zero
                     };
-                });     
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnAuthenticationFailed = context =>
+                        {
+                            context.Response.ContentType = context.Exception.ToString();
+                            context.Response.Headers.Add("Token-Expired", "true");
+                            if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                            {
 
-            services.AddDbContext<UniProContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("UniProContext")));
+                            }
+                            return Task.CompletedTask;
+                        }
+                    };
+                });
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<UniProContext>();
 
+            services.AddControllersWithViews();
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/dist";
             });
 
-            services.AddScoped<IAuthenticateService, TokenAuthenticationService>();
+            services.AddMvcCore(_ =>
+            {
+                _.EnableEndpointRouting = false;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseRouting();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -95,24 +122,34 @@ namespace UniProWeb
                 app.UseHsts();
             }
 
-            app.UseCors("EnableCORS");
+            app.UseCors(x => x
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
+
             app.UseAuthentication();
+
+            app.UseAuthorization();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+
+            app.UseMvc();
+
 
             if (!env.IsDevelopment())
             {
                 app.UseSpaStaticFiles();
             }
 
-            app.UseRouting();
+            //app.UseRouting();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller}/{action=Index}/{id?}");
-            });
+            //app.UseEndpoints(endpoints =>
+            //{
+            //    endpoints.MapControllerRoute(
+            //        name: "default",
+            //        pattern: "{controller}/{action=Index}/{id?}");
+            //});
 
             app.UseSpa(spa =>
             {
@@ -120,7 +157,7 @@ namespace UniProWeb
                 // see https://go.microsoft.com/fwlink/?linkid=864501
 
                 spa.Options.SourcePath = "ClientApp";
-
+                spa.Options.DefaultPage = "/dist/index.html";
                 if (env.IsDevelopment())
                 {
                     //Использовать для запуска angular CLI вместе с проектом

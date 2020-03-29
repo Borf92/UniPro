@@ -7,6 +7,6 @@ namespace UniProWeb.Models
     {       
         [Required]
         [JsonProperty("refresh_token")]
-        public string RefreshToken { get; set; }
+        public string Refresh_Token { get; set; }
     }
 }

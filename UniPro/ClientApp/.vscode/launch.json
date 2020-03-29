@@ -5,24 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "chrome",
+            "type": "firefox",
             "request": "launch",
-            "name": "Launch Vivaldi against localhost",
+            "reAttach": true,
+            "name": "Launch localhost",
             "url": "http://localhost:44323",
-            "webRoot": "${workspaceFolder}",
-            "targetTypes": ["page", "webview"],
-            "port": 4200,
-            "runtimeExecutable": "C:/Users/BastrikovDG/AppData/Local/Vivaldi/Application/vivaldi.exe",
-            "runtimeArgs": ["--remote-debugging-port=4200", "--new-window"]
-        },
-        {
-            "type": "chrome",
-            "request": "attach",
-            "name": "Attach Vivaldi against localhost",
-            "port": 4200,
-            "urlFilter": "http://localhost:44323/*",
-            "webRoot": "${workspaceFolder}",
-            "targetTypes": ["page", "webview"]
-          }
+            "webRoot": "${workspaceFolder}"
+        }
     ]
 }
